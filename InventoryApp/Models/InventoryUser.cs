@@ -8,6 +8,6 @@ namespace InventoryApp.Models
 {
     public class InventoryUser : IdentityUser
     {
-
+        public virtual ICollection<Checkout> Checkouts { get; set; }
     }
 }
