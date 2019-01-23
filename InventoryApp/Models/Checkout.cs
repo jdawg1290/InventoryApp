@@ -11,10 +11,12 @@ namespace InventoryApp.Models
 
         public string UserName { get; set; }
 
+        public int InventoryItemID { get; set; }
+
+        public virtual InventoryItem InventoryItem { get; set; }
+
         public DateTime Start { get; set; }
 
         public DateTime? End { get; set; }
-
-        public virtual ICollection<InventoryItem> InvItems { get; set; }
     }
 }

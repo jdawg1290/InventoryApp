@@ -15,5 +15,6 @@ namespace InventoryApp.Data
         }
         public DbSet<InventoryApp.Models.Item> Item { get; set; }
         public DbSet<InventoryApp.Models.InventoryItem> InventoryItem { get; set; }
+        public DbSet<InventoryApp.Models.Checkout> Checkout { get; set; }
     }
 }

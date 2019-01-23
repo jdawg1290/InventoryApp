@@ -11,6 +11,6 @@ namespace InventoryApp.Models
 
         public string Name { get; set; }
 
-        public virtual ICollection<InventoryItem> Inventory { get; set; }
+        public virtual ICollection<InventoryItem> InventoryItems { get; set; }
     }
 }
