@@ -23,7 +23,7 @@ namespace InventoryApp.Areas.Identity.Pages.Account
         public RegisterModel(
             UserManager<InventoryUser> userManager,
             SignInManager<InventoryUser> signInManager,
-            ILogger<RegisterModel> logger,)
+            ILogger<RegisterModel> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -38,9 +38,8 @@ namespace InventoryApp.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress]
             [Display(Name = "ID")]
-            public string ID { get; set; }
+            public string UserName { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
@@ -64,7 +63,7 @@ namespace InventoryApp.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var user = new InventoryUser { UserName = Input.ID };
+                var user = new InventoryUser { UserName = Input.UserName };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
