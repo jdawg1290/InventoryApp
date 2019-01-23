@@ -50,7 +50,7 @@ namespace InventoryApp.Controllers
         // GET: InventoryItems/Create
         public IActionResult Create()
         {
-            ViewData["ItemID"] = new SelectList(_context.Item, "ID", "ID");
+            ViewData["ItemID"] = new SelectList(_context.Item, "ID", "Name");
             return View();
         }
 
@@ -67,7 +67,7 @@ namespace InventoryApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ItemID"] = new SelectList(_context.Item, "ID", "ID", inventoryItem.ItemID);
+            ViewData["ItemID"] = new SelectList(_context.Item, "ID", "Name", inventoryItem.ItemID);
             return View(inventoryItem);
         }
 
@@ -84,7 +84,7 @@ namespace InventoryApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["ItemID"] = new SelectList(_context.Item, "ID", "ID", inventoryItem.ItemID);
+            ViewData["ItemID"] = new SelectList(_context.Item, "ID", "Name", inventoryItem.ItemID);
             return View(inventoryItem);
         }
 
@@ -120,7 +120,7 @@ namespace InventoryApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ItemID"] = new SelectList(_context.Item, "ID", "ID", inventoryItem.ItemID);
+            ViewData["ItemID"] = new SelectList(_context.Item, "ID", "Name", inventoryItem.ItemID);
             return View(inventoryItem);
         }
 
