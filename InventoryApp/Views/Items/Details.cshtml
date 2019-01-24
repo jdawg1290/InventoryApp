@@ -17,9 +17,13 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
     </dl>
+    <h5>Serial Numbers</h5>
     <ul>
-        @foreach(var modelItem in Model.InventoryItems)
+        @foreach (var item in Model.InventoryItems)
         {
+            <li>
+                @Html.ActionLink(item.Serial, "Details", "InventoryItems", new { id= item.ID })
+            </li>
         }
     </ul>
 </div>

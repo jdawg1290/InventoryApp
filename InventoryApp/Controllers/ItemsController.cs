@@ -34,7 +34,7 @@ namespace InventoryApp.Models
                 return NotFound();
             }
 
-            var item = await _context.Item
+            var item = await _context.Item.Include(s => s.InventoryItems)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (item == null)
             {

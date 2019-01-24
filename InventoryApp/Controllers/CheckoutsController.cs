@@ -24,33 +24,13 @@ namespace InventoryApp.Controllers
         // GET: Checkouts
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Checkout.Include(c => c.InventoryItem).Include(i => i.InventoryItem.Item);
+            var applicationDbContext = _context.Checkout.Include(c => c.InventoryItem).ThenInclude(i => i.Item);
             return View(await applicationDbContext.Where(c => c.End == null).ToListAsync());
-        }
-
-        // GET: Checkouts/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var checkout = await _context.Checkout
-                .Include(c => c.InventoryItem)
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (checkout == null)
-            {
-                return NotFound();
-            }
-
-            return View(checkout);
         }
 
         // GET: Checkouts/Create
         public IActionResult Create()
         {
-            ViewData["InventoryItemID"] = new SelectList(_context.InventoryItem, "ID", "ID");
             return View();
         }
 
@@ -59,99 +39,67 @@ namespace InventoryApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,UserName,InventoryItemID,Start,End")] Checkout checkout)
+        public async Task<IActionResult> Create([Bind("UserName,Serial")] CheckoutCreateViewModel checkout)
         {
+            var SearchItem = await _context.InventoryItem.FirstOrDefaultAsync(i => i.Serial == checkout.Serial);
+            if (SearchItem == null)
+            {
+                ModelState.AddModelError("INVALID_SERIAL", "Serial Number does not exist");
+            }
+            var checkoutStatus = await _context.Checkout.Where(c => c.End == null).Where(c => c.InventoryItemID == SearchItem.ID).CountAsync();
+            if (checkoutStatus > 0)
+            {
+                ModelState.AddModelError("ALREADY_OUT", "Item is currently checked out.");
+            }
             if (ModelState.IsValid)
             {
-                _context.Add(checkout);
+                var newCheckout = new Checkout
+                {
+                    UserName = checkout.UserName,
+                    InventoryItemID = SearchItem.ID,
+                    Start = DateTime.Now,
+                    End = null
+                };
+                _context.Add(newCheckout);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["InventoryItemID"] = new SelectList(_context.InventoryItem, "ID", "ID", checkout.InventoryItemID);
             return View(checkout);
         }
 
-        // GET: Checkouts/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Checkin(string Serial)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var checkout = await _context.Checkout.FindAsync(id);
-            if (checkout == null)
-            {
-                return NotFound();
-            }
-            ViewData["InventoryItemID"] = new SelectList(_context.InventoryItem, "ID", "ID", checkout.InventoryItemID);
-            return View(checkout);
+            ViewData["Serial"] = Serial;
+            return View();
         }
 
-        // POST: Checkouts/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,UserName,InventoryItemID,Start,End")] Checkout checkout)
+        public async Task<IActionResult> Checkin([Bind("Serial")] CheckinViewModel checkin)
         {
-            if (id != checkout.ID)
+            var InventoryItem = await _context.InventoryItem.SingleOrDefaultAsync(i => i.Serial == checkin.Serial);
+            if (InventoryItem == null)
             {
-                return NotFound();
+                ModelState.AddModelError("INVALID_SERIAL", "Serial Number does not exist");
             }
-
+            var pendingCheckout = await _context.Checkout.Where(c => c.End == null).SingleOrDefaultAsync(c => c.InventoryItemID == InventoryItem.ID);
+            if (pendingCheckout == null)
+            {
+                ModelState.AddModelError("NOT_CHECKED_OUT", "Item is not checked out");
+            }
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(checkout);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CheckoutExists(checkout.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                pendingCheckout.End = DateTime.Now;
+                _context.Entry(pendingCheckout).State = EntityState.Modified;
+                _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["InventoryItemID"] = new SelectList(_context.InventoryItem, "ID", "ID", checkout.InventoryItemID);
-            return View(checkout);
+            return View(checkin);
         }
 
-        // GET: Checkouts/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> CheckoutsLog()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var checkout = await _context.Checkout
-                .Include(c => c.InventoryItem)
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (checkout == null)
-            {
-                return NotFound();
-            }
-
-            return View(checkout);
-        }
-
-        // POST: Checkouts/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var checkout = await _context.Checkout.FindAsync(id);
-            _context.Checkout.Remove(checkout);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return View(await _context.Checkout.Include(c => c.InventoryItem).ThenInclude(i => i.Item).OrderByDescending(c => c.Start).ToListAsync());
         }
 
         private bool CheckoutExists(int id)

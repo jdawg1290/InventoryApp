@@ -1,14 +1,11 @@
 ﻿@model IEnumerable<InventoryApp.Models.Checkout>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Inventory Log";
 }
 
-<h2>Index</h2>
+<h2>Inventory Log</h2>
 
-<p>
-    <a asp-action="Create">Checkout</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -25,7 +22,7 @@
                 @Html.DisplayNameFor(model => model.Start)
             </th>
             <th>
-                Actions
+                @Html.DisplayNameFor(model => model.End)
             </th>
         </tr>
     </thead>
@@ -45,7 +42,7 @@
                 @Html.DisplayFor(modelItem => item.Start)
             </td>
             <td>
-                @Html.ActionLink("Check In", "Checkin", new { Serial = item.InventoryItem.Serial })
+                @Html.DisplayFor(modelItem => item.End)
             </td>
         </tr>
 }

@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<InventoryApp.Models.Item>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Item Types";
 }
 
-<h2>Index</h2>
+<h2>Item Types</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -15,7 +15,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
-            <th></th>
+            <th>
+                Actions
+            </th>
         </tr>
     </thead>
     <tbody>

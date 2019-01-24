@@ -1,11 +1,16 @@
-﻿@model InventoryApp.Models.Checkout
+﻿@model InventoryApp.Models.CheckoutCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
 }
 
 <h2>Create</h2>
-
+<h3 class="text-danger">
+    @foreach (var error in ViewData.ModelState.Values.SelectMany(m => m.Errors))
+    {
+        @error.ErrorMessage;
+    }
+</h3>
 <h4>Checkout</h4>
 <hr />
 <div class="row">
@@ -18,18 +23,8 @@
                 <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="InventoryItemID" class="control-label"></label>
-                <select asp-for="InventoryItemID" class ="form-control" asp-items="ViewBag.InventoryItemID"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Start" class="control-label"></label>
-                <input asp-for="Start" class="form-control" />
-                <span asp-validation-for="Start" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="End" class="control-label"></label>
-                <input asp-for="End" class="form-control" />
-                <span asp-validation-for="End" class="text-danger"></span>
+                <label asp-for="Serial" class="control-label">Serial</label>
+                <input asp-for="Serial" class="form-control" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />

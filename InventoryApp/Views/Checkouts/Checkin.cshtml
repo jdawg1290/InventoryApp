@@ -1,0 +1,38 @@
+﻿@model InventoryApp.Models.CheckinViewModel
+
+@{
+    ViewData["Title"] = "Checkin";
+}
+
+<h2>Checkin</h2>
+<h3 class="text-danger">
+    @foreach (var error in ViewData.ModelState.Values.SelectMany(m => m.Errors))
+    {
+        @error.ErrorMessage;
+    }
+</h3>
+<h4>Checkout</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Checkin">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Serial" class="control-label"></label>
+                <input asp-for="Serial" class="form-control" value="@ViewData["Serial"]"/>
+                <span asp-validation-for="Serial" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

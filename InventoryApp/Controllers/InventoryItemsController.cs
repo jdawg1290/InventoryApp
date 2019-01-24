@@ -24,8 +24,7 @@ namespace InventoryApp.Controllers
         // GET: InventoryItems
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.InventoryItem.Include(i => i.Item);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _context.InventoryItem.Include(i => i.Item).ToListAsync());
         }
 
         // GET: InventoryItems/Details/5
@@ -38,7 +37,9 @@ namespace InventoryApp.Controllers
 
             var inventoryItem = await _context.InventoryItem
                 .Include(i => i.Item)
+                .Include(i => i.Checkouts)
                 .FirstOrDefaultAsync(m => m.ID == id);
+            ViewData["isCheckedOut"] = inventoryItem.Checkouts.Where(c => c.End == null).Count() == 1;
             if (inventoryItem == null)
             {
                 return NotFound();

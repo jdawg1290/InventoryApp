@@ -17,12 +17,45 @@
             @Html.DisplayFor(model => model.Serial)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Item)
+            @Html.DisplayNameFor(model => model.Item.Name)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Item.ID)
+            @Html.DisplayFor(model => model.Item.Name)
+        </dd>
+        <dt>
+            Is Checked Out
+        </dt>
+        <dd>
+            @ViewData["isCheckedOut"]
         </dd>
     </dl>
+    <table>
+        <tr>
+            <th style="padding-right:100px">
+                @Html.DisplayNameFor(model => model.Checkouts.First().UserName)
+            </th>
+            <th style="padding-right:200px">
+                @Html.DisplayNameFor(model => model.Checkouts.First().Start)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Checkouts.First().End)
+            </th>
+        </tr>        
+        @foreach(var checkout in Model.Checkouts.OrderByDescending(c => c.Start))
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(c => checkout.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(c => checkout.Start)
+                </td>
+                <td>
+                    @Html.DisplayFor(c => checkout.End)
+                </td>
+            </tr>
+        }
+    </table>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
