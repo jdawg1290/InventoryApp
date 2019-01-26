@@ -19,6 +19,9 @@
                 @Html.DisplayNameFor(model => model.Item)
             </th>
             <th>
+                Checked Out
+            </th>
+            <th>
                 Actions
             </th>
         </tr>
@@ -32,6 +35,18 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Item.Name)
+                </td>
+                <td>
+                    @{
+                        if (item.Checkouts.Any(c => c.End == null))
+                        {
+                            Write("Yes");
+                        }
+                        else
+                        {
+                            Write("No");
+                        }
+                    }
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

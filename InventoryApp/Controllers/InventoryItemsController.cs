@@ -24,7 +24,8 @@ namespace InventoryApp.Controllers
         // GET: InventoryItems
         public async Task<IActionResult> Index()
         {
-            return View(await _context.InventoryItem.Include(i => i.Item).ToListAsync());
+            var list = await _context.InventoryItem.Include(i => i.Item).Include(i => i.Checkouts).ToListAsync();
+            return View(list);
         }
 
         // GET: InventoryItems/Details/5
